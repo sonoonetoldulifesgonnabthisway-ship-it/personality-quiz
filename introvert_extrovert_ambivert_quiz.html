@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Are You an Introvert, Extrovert or Ambivert?</title>
+  <style>
+    :root {
+      --navy: #243d50;
+      --blue: #7897b0;
+      --orange: #d39b6c;
+      --green: #79a994;
+      --pale: #edf3f6;
+      --line: #dce5eb;
+      --ink: #263746;
+      --muted: #687987;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px 16px 48px;
+      background: #f3f6f8;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+    .page { max-width: 780px; margin: 0 auto; }
+    .hero {
+      background: var(--navy);
+      color: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 12px 30px rgba(36,61,80,.12);
+    }
+    .eyebrow {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: #456174;
+      color: #e3f0e9;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+    h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.12; margin: 17px 0 12px; }
+    .hero p { color: #dce7ee; margin: 0 0 22px; max-width: 620px; }
+    .hero-art {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+      margin: 20px 0 24px;
+    }
+    .art-card {
+      flex: 1;
+      min-height: 104px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 12px 8px;
+      color: #243d50;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .art-card span { display: block; font-size: 30px; margin-bottom: 5px; }
+    .art-card:nth-child(1) { background: #dce8ef; }
+    .art-card:nth-child(2) { background: #f0dfcf; }
+    .art-card:nth-child(3) { background: #dcebe3; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 7px; }
+    .progress-track { height: 8px; background: #536a7b; border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: #b5d7c5; transition: width .2s; }
+    .intro { color: var(--muted); margin: 22px 2px 16px; font-size: 14px; }
+    .question {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 13px 0;
+    }
+    .question h2 { font-size: 17px; line-height: 1.4; margin: 0 0 14px; }
+    .number {
+      display: inline-block;
+      vertical-align: 2px;
+      color: #39566b;
+      background: #e8eff4;
+      border-radius: 7px;
+      padding: 3px 8px;
+      margin-right: 7px;
+      font-size: 11px;
+      letter-spacing: .03em;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      border: 1px solid #e5ebef;
+      border-radius: 10px;
+      padding: 11px 12px;
+      margin: 8px 0 0;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+      font-size: 14px;
+    }
+    .option:hover { background: #f7fafb; border-color: #b8c9d4; }
+    .option:has(input:checked) { background: #eef4f6; border-color: #8da8b8; }
+    .option input { margin: 4px 0 0; accent-color: #395d73; flex: 0 0 auto; }
+    button {
+      border: 0;
+      border-radius: 10px;
+      background: var(--navy);
+      color: white;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 18px;
+      transition: opacity .15s, transform .15s;
+    }
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:disabled { opacity: .4; cursor: not-allowed; }
+    .result {
+      display: none;
+      margin-top: 22px;
+      padding: 25px;
+      border-radius: 16px;
+      background: var(--pale);
+      border: 1px solid #dce7ed;
+    }
+    .result.show { display: block; }
+    .result-tag {
+      color: #37634f;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+    .result h2 { color: var(--navy); font-size: 30px; margin: 7px 0 10px; }
+    .result p { margin: 0 0 18px; }
+    .breakdown { margin: 18px 0; }
+    .bar-row { margin: 12px 0; }
+    .bar-heading { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+    .bar { height: 9px; border-radius: 99px; background: #d5e0e7; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; }
+    .bar-fill.introvert { background: var(--blue); }
+    .bar-fill.extrovert { background: var(--orange); }
+    .bar-fill.ambivert { background: var(--green); }
+    .note { color: #526778; font-size: 12px; margin-top: 18px !important; }
+    .secondary {
+      background: transparent;
+      color: var(--navy);
+      border: 1px solid #9aafbd;
+      margin-top: 8px;
+    }
+    @media (max-width: 520px) {
+      body { padding: 14px 10px 30px; }
+      .hero { padding: 22px 18px; }
+      .question { padding: 16px; }
+      .art-card { min-height: 90px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <span class="eyebrow">PERSONALITY QUIZ · B2</span>
+      <h1>Are you an introvert, extrovert or ambivert?</h1>
+      <p>Discover your personality type! Answer 8 questions and find out where you are on the personality spectrum.</p>
+      <div class="hero-art" aria-label="Three personality styles">
+        <div class="art-card"><div><span>📚</span>Quiet &amp; thoughtful</div></div>
+        <div class="art-card"><div><span>🎉</span>Outgoing &amp; social</div></div>
+        <div class="art-card"><div><span>⚖️</span>A bit of both</div></div>
+      </div>
+      <div class="progress-label"><span>YOUR PROGRESS</span><span id="progressText">0 / 8</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </header>
+
+    <p class="intro">Choose the answer that describes you best. There are no right or wrong answers!</p>
+    <form id="quizForm">
+      <div id="questions"></div>
+      <button id="submitBtn" type="submit" disabled>Find out my personality</button>
+    </form>
+
+    <section class="result" id="result" aria-live="polite">
+      <span class="result-tag">YOUR RESULT</span>
+      <h2 id="resultTitle"></h2>
+      <p id="resultDescription"></p>
+      <div class="breakdown">
+        <strong>Your answers</strong>
+        <div id="bars"></div>
+      </div>
+      <p class="note">Your result is based on your most frequent answer. If there is a tie, your result is Ambivert. Remember, personality is a spectrum, not a fixed label!</p>
+      <button class="secondary" id="retryBtn" type="button">↻ Take the quiz again</button>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      ["It's Friday evening! How would you prefer to spend your time?", [
+        ["Stay at home, read a book or watch a film. I need some time to myself.", 0],
+        ["Go out with friends. The more people, the better!", 1],
+        ["Have a quiet evening, but meet a friend if they suggest it.", 2],
+        ["Decide at the last minute. It depends entirely on my mood!", 2]
+      ]],
+      ["You're at a party where you hardly know anyone. What do you do?", [
+        ["Find a quiet corner and wait for someone to approach me.", 0],
+        ["Introduce myself to everyone. I love meeting new people!", 1],
+        ["Look for someone who seems friendly and start a conversation.", 2],
+        ["Observe the atmosphere first and decide whether I feel like socialising.", 2]
+      ]],
+      ["Which group of adjectives describes you best?", [
+        ["Reserved, thoughtful and independent.", 0],
+        ["Outgoing, energetic and sociable.", 1],
+        ["Reliable, considerate and easy-going.", 2],
+        ["Spontaneous, adaptable and open-minded.", 2]
+      ]],
+      ["You have a difficult problem to solve. What's your preferred approach?", [
+        ["Think it through on my own. I work best without distractions.", 0],
+        ["Discuss it with friends. Sharing ideas helps me find solutions.", 1],
+        ["Ask someone I trust for advice, then make my own decision.", 2],
+        ["It depends on the problem. I can work either alone or with others.", 2]
+      ]],
+      ["Your teacher asks you to work with students you don't know very well. How do you react?", [
+        ["I'd rather work independently. Group work can be exhausting.", 0],
+        ["Great! I enjoy meeting people and exchanging ideas.", 1],
+        ["I'll look for someone friendly to work with first.", 2],
+        ["I'm happy to give it a try. I can adapt to different people.", 2]
+      ]],
+      ["What do your friends appreciate most about you?", [
+        ["I'm a good listener and a thoughtful person. They can rely on me.", 0],
+        ["I'm energetic and enthusiastic. I know how to cheer everyone up!", 1],
+        ["I'm considerate and understanding. I try to keep everyone happy.", 2],
+        ["I'm open-minded and adaptable. I get along with different people.", 2]
+      ]],
+      ["How do you recharge after a stressful week?", [
+        ["Spend time alone doing something relaxing. I need peace and quiet.", 0],
+        ["Meet my friends and have fun. Being around people gives me energy!", 1],
+        ["Spend time with my family or a close friend.", 2],
+        ["Choose between going out and staying in depending on my mood.", 2]
+      ]],
+      ["Which statement sounds most like you?", [
+        ["I prefer a few close friends to a large circle of acquaintances.", 0],
+        ["I feel confident in social situations and enjoy being the centre of attention.", 1],
+        ["I enjoy socialising, but I also value my personal space.", 2],
+        ["I can be talkative with friends but quiet around strangers.", 2]
+      ]]
+    ];
+
+    const types = ["Introvert", "Extrovert", "Ambivert"];
+    const descriptions = [
+      "You are reserved, thoughtful and independent. You enjoy your own company and prefer meaningful conversations to small talk. You often need some quiet time to recharge. Your ability to listen and think deeply is one of your greatest strengths.",
+      "You are outgoing, enthusiastic and sociable. You love meeting new people, making friends and being part of a group. Social interaction gives you energy, and you often feel comfortable in the spotlight. Your enthusiasm can bring people together.",
+      "You are adaptable, easy-going and open-minded. You enjoy socialising but also appreciate your personal space. You can be outgoing in some situations and reserved in others. Your ability to adapt to different people and situations is a real strength."
+    ];
+
+    const questionsContainer = document.getElementById("questions");
+    const form = document.getElementById("quizForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const result = document.getElementById("result");
+
+    questions.forEach((question, index) => {
+      const section = document.createElement("section");
+      section.className = "question";
+      const heading = document.createElement("h2");
+      const number = document.createElement("span");
+      number.className = "number";
+      number.textContent = `${index + 1} / 8`;
+      heading.append(number, document.createTextNode(question[0]));
+      section.appendChild(heading);
+
+      question[1].forEach((answer, answerIndex) => {
+        const label = document.createElement("label");
+        label.className = "option";
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = `question${index}`;
+        radio.value = answerIndex;
+        radio.dataset.type = answer[1];
+        radio.addEventListener("change", updateProgress);
+        label.append(radio, document.createTextNode(answer[0]));
+        section.appendChild(label);
+      });
+      questionsContainer.appendChild(section);
+    });
+
+    function getAnswers() {
+      return questions.map((_, index) => {
+        const selected = form.querySelector(`input[name="question${index}"]:checked`);
+        return selected ? Number(selected.value) : null;
+      });
+    }
+
+    function updateProgress() {
+      const answered = getAnswers().filter(value => value !== null).length;
+      document.getElementById("progressText").textContent = `${answered} / 8`;
+      document.getElementById("progressFill").style.width = `${answered / 8 * 100}%`;
+      submitBtn.disabled = answered !== questions.length;
+      result.classList.remove("show");
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const answers = getAnswers();
+      if (answers.some(value => value === null)) return;
+
+      const counts = [0, 0, 0];
+      answers.forEach((_, index) => {
+        const selected = form.querySelector(`input[name="question${index}"]:checked`);
+        counts[Number(selected.dataset.type)]++;
+      });
+      const highest = Math.max(...counts);
+      const tied = counts.filter(count => count === highest).length > 1;
+      const winner = tied ? 2 : counts.indexOf(highest);
+
+      document.getElementById("resultTitle").textContent = `You're an ${winner === 0 ? "Introvert" : winner === 1 ? "Extrovert" : "Ambivert"}!`;
+      document.getElementById("resultDescription").textContent = descriptions[winner];
+
+      const bars = document.getElementById("bars");
+      bars.replaceChildren();
+      types.forEach((type, index) => {
+        const row = document.createElement("div");
+        row.className = "bar-row";
+        const heading = document.createElement("div");
+        heading.className = "bar-heading";
+        const name = document.createElement("span");
+        name.textContent = type;
+        const score = document.createElement("span");
+        score.textContent = `${counts[index]} / 8`;
+        heading.append(name, score);
+        const track = document.createElement("div");
+        track.className = "bar";
+        const fill = document.createElement("div");
+        fill.className = `bar-fill ${type.toLowerCase()}`;
+        fill.style.width = `${counts[index] / 8 * 100}%`;
+        track.appendChild(fill);
+        row.append(heading, track);
+        bars.appendChild(row);
+      });
+
+      result.classList.add("show");
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    document.getElementById("retryBtn").addEventListener("click", () => {
+      form.reset();
+      result.classList.remove("show");
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>
